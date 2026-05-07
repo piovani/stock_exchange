@@ -12,34 +12,26 @@ import (
 
 type Handler struct {
 	pb.UnimplementedStockServiceServer
-	svc *stock.Service
+	svc       *stock.Service
+	symbolSvc *stock.SymbolService
 }
 
-func NewHandler(svc *stock.Service) *Handler {
-	return &Handler{svc: svc}
+func NewHandler(svc *stock.Service, symbolSvc *stock.SymbolService) *Handler {
+	return &Handler{svc: svc, symbolSvc: symbolSvc}
 }
 
 func (h *Handler) GetQuote(ctx context.Context, req *pb.GetQuoteRequest) (*pb.GetQuoteResponse, error) {
-	if req.Symbol == "" {
-		return nil, status.Error(codes.InvalidArgument, "symbol is required")
-	}
 	q, err := h.svc.GetQuote(ctx, req.Symbol)
 	if err != nil {
-		if errors.Is(err, stock.ErrNotFound) {
-			return nil, status.Errorf(codes.NotFound, "symbol %q not found", req.Symbol)
-		}
-		return nil, status.Errorf(codes.Internal, "failed to get quote: %v", err)
+		return nil, toGRPCError(err)
 	}
 	return &pb.GetQuoteResponse{Quote: toProto(q)}, nil
 }
 
 func (h *Handler) ListQuotes(ctx context.Context, req *pb.ListQuotesRequest) (*pb.ListQuotesResponse, error) {
-	if len(req.Symbols) == 0 {
-		return nil, status.Error(codes.InvalidArgument, "at least one symbol is required")
-	}
 	quotes, err := h.svc.ListQuotes(ctx, req.Symbols)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to list quotes: %v", err)
+		return nil, toGRPCError(err)
 	}
 	out := make([]*pb.Quote, len(quotes))
 	for i := range quotes {
@@ -49,12 +41,9 @@ func (h *Handler) ListQuotes(ctx context.Context, req *pb.ListQuotesRequest) (*p
 }
 
 func (h *Handler) SearchStocks(ctx context.Context, req *pb.SearchStocksRequest) (*pb.SearchStocksResponse, error) {
-	if req.Query == "" {
-		return nil, status.Error(codes.InvalidArgument, "query is required")
-	}
 	results, err := h.svc.Search(ctx, req.Query)
 	if err != nil {
-		return nil, status.Errorf(codes.Internal, "failed to search: %v", err)
+		return nil, toGRPCError(err)
 	}
 	out := make([]*pb.StockInfo, len(results))
 	for i, r := range results {
@@ -66,6 +55,38 @@ func (h *Handler) SearchStocks(ctx context.Context, req *pb.SearchStocksRequest)
 		}
 	}
 	return &pb.SearchStocksResponse{Results: out}, nil
+}
+
+func (h *Handler) ListSymbols(ctx context.Context, req *pb.ListSymbolsRequest) (*pb.ListSymbolsResponse, error) {
+	exchange, err := stock.ParseExchange(req.Exchange)
+	if err != nil {
+		return nil, status.Errorf(codes.InvalidArgument, "%v", err)
+	}
+	symbols, err := h.symbolSvc.ListSymbols(ctx, exchange)
+	if err != nil {
+		return nil, toGRPCError(err)
+	}
+	out := make([]*pb.StockInfo, len(symbols))
+	for i, s := range symbols {
+		out[i] = &pb.StockInfo{
+			Symbol:    s.Ticker,
+			ShortName: s.Name,
+			Exchange:  s.Exchange,
+			Type:      s.Type,
+		}
+	}
+	return &pb.ListSymbolsResponse{Symbols: out, Total: int32(len(out))}, nil
+}
+
+func toGRPCError(err error) error {
+	switch {
+	case errors.Is(err, stock.ErrInvalidInput):
+		return status.Errorf(codes.InvalidArgument, "%v", err)
+	case errors.Is(err, stock.ErrNotFound):
+		return status.Errorf(codes.NotFound, "%v", err)
+	default:
+		return status.Errorf(codes.Internal, "%v", err)
+	}
 }
 
 func toProto(q *stock.Quote) *pb.Quote {

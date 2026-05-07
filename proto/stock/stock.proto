@@ -8,6 +8,7 @@ service StockService {
   rpc GetQuote(GetQuoteRequest) returns (GetQuoteResponse);
   rpc ListQuotes(ListQuotesRequest) returns (ListQuotesResponse);
   rpc SearchStocks(SearchStocksRequest) returns (SearchStocksResponse);
+  rpc ListSymbols(ListSymbolsRequest) returns (ListSymbolsResponse);
 }
 
 message GetQuoteRequest {
@@ -39,6 +40,16 @@ message StockInfo {
   string short_name = 2;
   string exchange  = 3;
   string type      = 4;
+}
+
+message ListSymbolsRequest {
+  // "B3", "US" ou "" para todos
+  string exchange = 1;
+}
+
+message ListSymbolsResponse {
+  repeated StockInfo symbols = 1;
+  int32 total = 2;
 }
 
 message Quote {

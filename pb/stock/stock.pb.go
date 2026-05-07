@@ -353,6 +353,103 @@ func (x *StockInfo) GetType() string {
 	return ""
 }
 
+type ListSymbolsRequest struct {
+	state protoimpl.MessageState `protogen:"open.v1"`
+	// "B3", "US" ou "" para todos
+	Exchange      string `protobuf:"bytes,1,opt,name=exchange,proto3" json:"exchange,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListSymbolsRequest) Reset() {
+	*x = ListSymbolsRequest{}
+	mi := &file_stock_stock_proto_msgTypes[7]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListSymbolsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListSymbolsRequest) ProtoMessage() {}
+
+func (x *ListSymbolsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_stock_stock_proto_msgTypes[7]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListSymbolsRequest.ProtoReflect.Descriptor instead.
+func (*ListSymbolsRequest) Descriptor() ([]byte, []int) {
+	return file_stock_stock_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *ListSymbolsRequest) GetExchange() string {
+	if x != nil {
+		return x.Exchange
+	}
+	return ""
+}
+
+type ListSymbolsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Symbols       []*StockInfo           `protobuf:"bytes,1,rep,name=symbols,proto3" json:"symbols,omitempty"`
+	Total         int32                  `protobuf:"varint,2,opt,name=total,proto3" json:"total,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *ListSymbolsResponse) Reset() {
+	*x = ListSymbolsResponse{}
+	mi := &file_stock_stock_proto_msgTypes[8]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *ListSymbolsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListSymbolsResponse) ProtoMessage() {}
+
+func (x *ListSymbolsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_stock_stock_proto_msgTypes[8]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListSymbolsResponse.ProtoReflect.Descriptor instead.
+func (*ListSymbolsResponse) Descriptor() ([]byte, []int) {
+	return file_stock_stock_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *ListSymbolsResponse) GetSymbols() []*StockInfo {
+	if x != nil {
+		return x.Symbols
+	}
+	return nil
+}
+
+func (x *ListSymbolsResponse) GetTotal() int32 {
+	if x != nil {
+		return x.Total
+	}
+	return 0
+}
+
 type Quote struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Symbol        string                 `protobuf:"bytes,1,opt,name=symbol,proto3" json:"symbol,omitempty"`
@@ -367,7 +464,7 @@ type Quote struct {
 
 func (x *Quote) Reset() {
 	*x = Quote{}
-	mi := &file_stock_stock_proto_msgTypes[7]
+	mi := &file_stock_stock_proto_msgTypes[9]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -379,7 +476,7 @@ func (x *Quote) String() string {
 func (*Quote) ProtoMessage() {}
 
 func (x *Quote) ProtoReflect() protoreflect.Message {
-	mi := &file_stock_stock_proto_msgTypes[7]
+	mi := &file_stock_stock_proto_msgTypes[9]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -392,7 +489,7 @@ func (x *Quote) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use Quote.ProtoReflect.Descriptor instead.
 func (*Quote) Descriptor() ([]byte, []int) {
-	return file_stock_stock_proto_rawDescGZIP(), []int{7}
+	return file_stock_stock_proto_rawDescGZIP(), []int{9}
 }
 
 func (x *Quote) GetSymbol() string {
@@ -459,7 +556,12 @@ const file_stock_stock_proto_rawDesc = "" +
 	"\n" +
 	"short_name\x18\x02 \x01(\tR\tshortName\x12\x1a\n" +
 	"\bexchange\x18\x03 \x01(\tR\bexchange\x12\x12\n" +
-	"\x04type\x18\x04 \x01(\tR\x04type\"\xb1\x01\n" +
+	"\x04type\x18\x04 \x01(\tR\x04type\"0\n" +
+	"\x12ListSymbolsRequest\x12\x1a\n" +
+	"\bexchange\x18\x01 \x01(\tR\bexchange\"W\n" +
+	"\x13ListSymbolsResponse\x12*\n" +
+	"\asymbols\x18\x01 \x03(\v2\x10.stock.StockInfoR\asymbols\x12\x14\n" +
+	"\x05total\x18\x02 \x01(\x05R\x05total\"\xb1\x01\n" +
 	"\x05Quote\x12\x16\n" +
 	"\x06symbol\x18\x01 \x01(\tR\x06symbol\x12\x1d\n" +
 	"\n" +
@@ -467,12 +569,13 @@ const file_stock_stock_proto_rawDesc = "" +
 	"\x05price\x18\x03 \x01(\x01R\x05price\x12\x16\n" +
 	"\x06change\x18\x04 \x01(\x01R\x06change\x12%\n" +
 	"\x0echange_percent\x18\x05 \x01(\x01R\rchangePercent\x12\x1c\n" +
-	"\ttimestamp\x18\x06 \x01(\x03R\ttimestamp2\xd7\x01\n" +
+	"\ttimestamp\x18\x06 \x01(\x03R\ttimestamp2\x9d\x02\n" +
 	"\fStockService\x12;\n" +
 	"\bGetQuote\x12\x16.stock.GetQuoteRequest\x1a\x17.stock.GetQuoteResponse\x12A\n" +
 	"\n" +
 	"ListQuotes\x12\x18.stock.ListQuotesRequest\x1a\x19.stock.ListQuotesResponse\x12G\n" +
-	"\fSearchStocks\x12\x1a.stock.SearchStocksRequest\x1a\x1b.stock.SearchStocksResponseB,Z*github.com/piovani/stock_exchange/pb/stockb\x06proto3"
+	"\fSearchStocks\x12\x1a.stock.SearchStocksRequest\x1a\x1b.stock.SearchStocksResponse\x12D\n" +
+	"\vListSymbols\x12\x19.stock.ListSymbolsRequest\x1a\x1a.stock.ListSymbolsResponseB,Z*github.com/piovani/stock_exchange/pb/stockb\x06proto3"
 
 var (
 	file_stock_stock_proto_rawDescOnce sync.Once
@@ -486,7 +589,7 @@ func file_stock_stock_proto_rawDescGZIP() []byte {
 	return file_stock_stock_proto_rawDescData
 }
 
-var file_stock_stock_proto_msgTypes = make([]protoimpl.MessageInfo, 8)
+var file_stock_stock_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_stock_stock_proto_goTypes = []any{
 	(*GetQuoteRequest)(nil),      // 0: stock.GetQuoteRequest
 	(*GetQuoteResponse)(nil),     // 1: stock.GetQuoteResponse
@@ -495,23 +598,28 @@ var file_stock_stock_proto_goTypes = []any{
 	(*SearchStocksRequest)(nil),  // 4: stock.SearchStocksRequest
 	(*SearchStocksResponse)(nil), // 5: stock.SearchStocksResponse
 	(*StockInfo)(nil),            // 6: stock.StockInfo
-	(*Quote)(nil),                // 7: stock.Quote
+	(*ListSymbolsRequest)(nil),   // 7: stock.ListSymbolsRequest
+	(*ListSymbolsResponse)(nil),  // 8: stock.ListSymbolsResponse
+	(*Quote)(nil),                // 9: stock.Quote
 }
 var file_stock_stock_proto_depIdxs = []int32{
-	7, // 0: stock.GetQuoteResponse.quote:type_name -> stock.Quote
-	7, // 1: stock.ListQuotesResponse.quotes:type_name -> stock.Quote
+	9, // 0: stock.GetQuoteResponse.quote:type_name -> stock.Quote
+	9, // 1: stock.ListQuotesResponse.quotes:type_name -> stock.Quote
 	6, // 2: stock.SearchStocksResponse.results:type_name -> stock.StockInfo
-	0, // 3: stock.StockService.GetQuote:input_type -> stock.GetQuoteRequest
-	2, // 4: stock.StockService.ListQuotes:input_type -> stock.ListQuotesRequest
-	4, // 5: stock.StockService.SearchStocks:input_type -> stock.SearchStocksRequest
-	1, // 6: stock.StockService.GetQuote:output_type -> stock.GetQuoteResponse
-	3, // 7: stock.StockService.ListQuotes:output_type -> stock.ListQuotesResponse
-	5, // 8: stock.StockService.SearchStocks:output_type -> stock.SearchStocksResponse
-	6, // [6:9] is the sub-list for method output_type
-	3, // [3:6] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	6, // 3: stock.ListSymbolsResponse.symbols:type_name -> stock.StockInfo
+	0, // 4: stock.StockService.GetQuote:input_type -> stock.GetQuoteRequest
+	2, // 5: stock.StockService.ListQuotes:input_type -> stock.ListQuotesRequest
+	4, // 6: stock.StockService.SearchStocks:input_type -> stock.SearchStocksRequest
+	7, // 7: stock.StockService.ListSymbols:input_type -> stock.ListSymbolsRequest
+	1, // 8: stock.StockService.GetQuote:output_type -> stock.GetQuoteResponse
+	3, // 9: stock.StockService.ListQuotes:output_type -> stock.ListQuotesResponse
+	5, // 10: stock.StockService.SearchStocks:output_type -> stock.SearchStocksResponse
+	8, // 11: stock.StockService.ListSymbols:output_type -> stock.ListSymbolsResponse
+	8, // [8:12] is the sub-list for method output_type
+	4, // [4:8] is the sub-list for method input_type
+	4, // [4:4] is the sub-list for extension type_name
+	4, // [4:4] is the sub-list for extension extendee
+	0, // [0:4] is the sub-list for field type_name
 }
 
 func init() { file_stock_stock_proto_init() }
@@ -525,7 +633,7 @@ func file_stock_stock_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_stock_stock_proto_rawDesc), len(file_stock_stock_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   8,
+			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

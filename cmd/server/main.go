@@ -7,7 +7,9 @@ import (
 
 	"github.com/piovani/stock_exchange/internal/domain/stock"
 	stockgrpc "github.com/piovani/stock_exchange/internal/grpc/stock"
-	"github.com/piovani/stock_exchange/internal/infra/yahoofinance"
+	"github.com/piovani/stock_exchange/internal/provider/brapi"
+	"github.com/piovani/stock_exchange/internal/provider/nasdaq"
+	"github.com/piovani/stock_exchange/internal/provider/yahoofinance"
 	pb "github.com/piovani/stock_exchange/pb/stock"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -19,9 +21,14 @@ func main() {
 		port = "50051"
 	}
 
-	repo := yahoofinance.NewRepository(yahoofinance.NewClient())
-	svc := stock.NewService(repo)
-	handler := stockgrpc.NewHandler(svc)
+	svc := stock.NewService(yahoofinance.NewClient())
+
+	symbolSvc := stock.NewSymbolService(map[stock.Exchange]stock.SymbolClient{
+		stock.ExchangeUS: nasdaq.NewClient(),
+		stock.ExchangeB3: brapi.NewClient(),
+	})
+
+	handler := stockgrpc.NewHandler(svc, symbolSvc)
 
 	lis, err := net.Listen("tcp", ":"+port)
 	if err != nil {

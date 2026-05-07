@@ -22,6 +22,7 @@ const (
 	StockService_GetQuote_FullMethodName     = "/stock.StockService/GetQuote"
 	StockService_ListQuotes_FullMethodName   = "/stock.StockService/ListQuotes"
 	StockService_SearchStocks_FullMethodName = "/stock.StockService/SearchStocks"
+	StockService_ListSymbols_FullMethodName  = "/stock.StockService/ListSymbols"
 )
 
 // StockServiceClient is the client API for StockService service.
@@ -31,6 +32,7 @@ type StockServiceClient interface {
 	GetQuote(ctx context.Context, in *GetQuoteRequest, opts ...grpc.CallOption) (*GetQuoteResponse, error)
 	ListQuotes(ctx context.Context, in *ListQuotesRequest, opts ...grpc.CallOption) (*ListQuotesResponse, error)
 	SearchStocks(ctx context.Context, in *SearchStocksRequest, opts ...grpc.CallOption) (*SearchStocksResponse, error)
+	ListSymbols(ctx context.Context, in *ListSymbolsRequest, opts ...grpc.CallOption) (*ListSymbolsResponse, error)
 }
 
 type stockServiceClient struct {
@@ -71,6 +73,16 @@ func (c *stockServiceClient) SearchStocks(ctx context.Context, in *SearchStocksR
 	return out, nil
 }
 
+func (c *stockServiceClient) ListSymbols(ctx context.Context, in *ListSymbolsRequest, opts ...grpc.CallOption) (*ListSymbolsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(ListSymbolsResponse)
+	err := c.cc.Invoke(ctx, StockService_ListSymbols_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // StockServiceServer is the server API for StockService service.
 // All implementations must embed UnimplementedStockServiceServer
 // for forward compatibility.
@@ -78,6 +90,7 @@ type StockServiceServer interface {
 	GetQuote(context.Context, *GetQuoteRequest) (*GetQuoteResponse, error)
 	ListQuotes(context.Context, *ListQuotesRequest) (*ListQuotesResponse, error)
 	SearchStocks(context.Context, *SearchStocksRequest) (*SearchStocksResponse, error)
+	ListSymbols(context.Context, *ListSymbolsRequest) (*ListSymbolsResponse, error)
 	mustEmbedUnimplementedStockServiceServer()
 }
 
@@ -96,6 +109,9 @@ func (UnimplementedStockServiceServer) ListQuotes(context.Context, *ListQuotesRe
 }
 func (UnimplementedStockServiceServer) SearchStocks(context.Context, *SearchStocksRequest) (*SearchStocksResponse, error) {
 	return nil, status.Error(codes.Unimplemented, "method SearchStocks not implemented")
+}
+func (UnimplementedStockServiceServer) ListSymbols(context.Context, *ListSymbolsRequest) (*ListSymbolsResponse, error) {
+	return nil, status.Error(codes.Unimplemented, "method ListSymbols not implemented")
 }
 func (UnimplementedStockServiceServer) mustEmbedUnimplementedStockServiceServer() {}
 func (UnimplementedStockServiceServer) testEmbeddedByValue()                      {}
@@ -172,6 +188,24 @@ func _StockService_SearchStocks_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
+func _StockService_ListSymbols_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListSymbolsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StockServiceServer).ListSymbols(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: StockService_ListSymbols_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StockServiceServer).ListSymbols(ctx, req.(*ListSymbolsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // StockService_ServiceDesc is the grpc.ServiceDesc for StockService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -190,6 +224,10 @@ var StockService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SearchStocks",
 			Handler:    _StockService_SearchStocks_Handler,
+		},
+		{
+			MethodName: "ListSymbols",
+			Handler:    _StockService_ListSymbols_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

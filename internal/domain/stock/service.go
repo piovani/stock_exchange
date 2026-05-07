@@ -3,20 +3,34 @@ package stock
 import (
 	"context"
 	"errors"
+	"fmt"
+	"strings"
 )
 
-var ErrNotFound = errors.New("stock not found")
+var (
+	ErrNotFound     = errors.New("stock not found")
+	ErrInvalidInput = errors.New("invalid input")
+)
 
-type Service struct {
-	repo Repository
+type quoteClient interface {
+	GetQuote(ctx context.Context, symbol string) (Quote, error)
+	GetQuotes(ctx context.Context, symbols []string) ([]Quote, error)
+	Search(ctx context.Context, query string) ([]SearchResult, error)
 }
 
-func NewService(repo Repository) *Service {
-	return &Service{repo: repo}
+type Service struct {
+	client quoteClient
+}
+
+func NewService(client quoteClient) *Service {
+	return &Service{client: client}
 }
 
 func (s *Service) GetQuote(ctx context.Context, symbol string) (*Quote, error) {
-	q, err := s.repo.GetQuote(ctx, symbol)
+	if strings.TrimSpace(symbol) == "" {
+		return nil, fmt.Errorf("%w: symbol is required", ErrInvalidInput)
+	}
+	q, err := s.client.GetQuote(ctx, symbol)
 	if err != nil {
 		return nil, err
 	}
@@ -24,9 +38,15 @@ func (s *Service) GetQuote(ctx context.Context, symbol string) (*Quote, error) {
 }
 
 func (s *Service) ListQuotes(ctx context.Context, symbols []string) ([]Quote, error) {
-	return s.repo.GetQuotes(ctx, symbols)
+	if len(symbols) == 0 {
+		return nil, fmt.Errorf("%w: at least one symbol is required", ErrInvalidInput)
+	}
+	return s.client.GetQuotes(ctx, symbols)
 }
 
 func (s *Service) Search(ctx context.Context, query string) ([]SearchResult, error) {
-	return s.repo.Search(ctx, query)
+	if strings.TrimSpace(query) == "" {
+		return nil, fmt.Errorf("%w: query is required", ErrInvalidInput)
+	}
+	return s.client.Search(ctx, query)
 }
