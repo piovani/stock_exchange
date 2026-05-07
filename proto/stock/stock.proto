@@ -1,0 +1,51 @@
+syntax = "proto3";
+
+package stock;
+
+option go_package = "github.com/piovani/stock_exchange/pb/stock";
+
+service StockService {
+  rpc GetQuote(GetQuoteRequest) returns (GetQuoteResponse);
+  rpc ListQuotes(ListQuotesRequest) returns (ListQuotesResponse);
+  rpc SearchStocks(SearchStocksRequest) returns (SearchStocksResponse);
+}
+
+message GetQuoteRequest {
+  string symbol = 1;
+}
+
+message GetQuoteResponse {
+  Quote quote = 1;
+}
+
+message ListQuotesRequest {
+  repeated string symbols = 1;
+}
+
+message ListQuotesResponse {
+  repeated Quote quotes = 1;
+}
+
+message SearchStocksRequest {
+  string query = 1;
+}
+
+message SearchStocksResponse {
+  repeated StockInfo results = 1;
+}
+
+message StockInfo {
+  string symbol    = 1;
+  string short_name = 2;
+  string exchange  = 3;
+  string type      = 4;
+}
+
+message Quote {
+  string symbol         = 1;
+  string short_name     = 2;
+  double price          = 3;
+  double change         = 4;
+  double change_percent = 5;
+  int64  timestamp      = 6;
+}
