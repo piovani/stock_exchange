@@ -2,7 +2,7 @@ PROTO_DIR := proto
 PB_DIR    := pb
 PROTO_FILES := $(shell find $(PROTO_DIR) -name "*.proto")
 
-.PHONY: proto build run test lint install-hooks
+.PHONY: proto build run test lint install-hooks db-up db-down collector
 
 proto:
 	PATH="$$PATH:$(shell go env GOPATH)/bin" protoc \
@@ -25,7 +25,14 @@ test:
 lint:
 	go vet ./...
 
-install-hooks:
-	cp scripts/hooks/post-commit .git/hooks/post-commit
-	chmod +x .git/hooks/post-commit
-	@echo "Hook post-commit instalado."
+db-up:
+	docker compose up -d postgres
+	@echo "Aguardando PostgreSQL..."
+	@until docker compose exec -T postgres pg_isready -U stock -d stock_exchange 2>/dev/null; do sleep 1; done
+	@echo "PostgreSQL pronto."
+
+db-down:
+	docker compose down
+
+collector:
+	go run ./cmd/collector $(ARGS)
