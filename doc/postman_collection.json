@@ -1,0 +1,166 @@
+{
+  "info": {
+    "name": "Stock Exchange gRPC",
+    "_postman_id": "stock-exchange-grpc-collection",
+    "description": "gRPC collection for stock.StockService. Requires Postman v10+ and the server running on localhost:50051 (`make run`).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "GetQuote",
+      "request": {
+        "method": "GRPC",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"symbol\": \"AAPL\"\n}"
+        },
+        "url": {
+          "raw": "grpc://localhost:50051",
+          "protocol": "grpc",
+          "host": ["localhost"],
+          "port": "50051"
+        },
+        "description": "Returns a real-time quote for a single stock symbol. Fields: symbol, short_name, price, change, change_percent, timestamp."
+      },
+      "grpc": {
+        "method": "stock.StockService/GetQuote",
+        "requestType": "UNARY",
+        "serviceDefinition": {
+          "mode": "reflection"
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "ListQuotes",
+      "request": {
+        "method": "GRPC",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"symbols\": [\"AAPL\", \"MSFT\", \"GOOGL\"]\n}"
+        },
+        "url": {
+          "raw": "grpc://localhost:50051",
+          "protocol": "grpc",
+          "host": ["localhost"],
+          "port": "50051"
+        },
+        "description": "Returns real-time quotes for multiple symbols concurrently. Individual failures are silently skipped."
+      },
+      "grpc": {
+        "method": "stock.StockService/ListQuotes",
+        "requestType": "UNARY",
+        "serviceDefinition": {
+          "mode": "reflection"
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "SearchStocks",
+      "request": {
+        "method": "GRPC",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"query\": \"apple\"\n}"
+        },
+        "url": {
+          "raw": "grpc://localhost:50051",
+          "protocol": "grpc",
+          "host": ["localhost"],
+          "port": "50051"
+        },
+        "description": "Searches stocks by name or symbol. Returns list of StockInfo (symbol, short_name, exchange, type)."
+      },
+      "grpc": {
+        "method": "stock.StockService/SearchStocks",
+        "requestType": "UNARY",
+        "serviceDefinition": {
+          "mode": "reflection"
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "ListSymbols – All",
+      "request": {
+        "method": "GRPC",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"exchange\": \"\"\n}"
+        },
+        "url": {
+          "raw": "grpc://localhost:50051",
+          "protocol": "grpc",
+          "host": ["localhost"],
+          "port": "50051"
+        },
+        "description": "Lists all known symbols. Empty exchange string returns all."
+      },
+      "grpc": {
+        "method": "stock.StockService/ListSymbols",
+        "requestType": "UNARY",
+        "serviceDefinition": {
+          "mode": "reflection"
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "ListSymbols – B3",
+      "request": {
+        "method": "GRPC",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"exchange\": \"B3\"\n}"
+        },
+        "url": {
+          "raw": "grpc://localhost:50051",
+          "protocol": "grpc",
+          "host": ["localhost"],
+          "port": "50051"
+        },
+        "description": "Lists symbols filtered to the B3 (Brazilian) exchange."
+      },
+      "grpc": {
+        "method": "stock.StockService/ListSymbols",
+        "requestType": "UNARY",
+        "serviceDefinition": {
+          "mode": "reflection"
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "ListSymbols – US",
+      "request": {
+        "method": "GRPC",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"exchange\": \"US\"\n}"
+        },
+        "url": {
+          "raw": "grpc://localhost:50051",
+          "protocol": "grpc",
+          "host": ["localhost"],
+          "port": "50051"
+        },
+        "description": "Lists symbols filtered to US exchanges."
+      },
+      "grpc": {
+        "method": "stock.StockService/ListSymbols",
+        "requestType": "UNARY",
+        "serviceDefinition": {
+          "mode": "reflection"
+        }
+      },
+      "response": []
+    }
+  ]
+}

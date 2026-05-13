@@ -2,7 +2,7 @@ PROTO_DIR := proto
 PB_DIR    := pb
 PROTO_FILES := $(shell find $(PROTO_DIR) -name "*.proto")
 
-.PHONY: proto build run test lint
+.PHONY: proto build run test lint install-hooks
 
 proto:
 	PATH="$$PATH:$(shell go env GOPATH)/bin" protoc \
@@ -24,3 +24,8 @@ test:
 
 lint:
 	go vet ./...
+
+install-hooks:
+	cp scripts/hooks/post-commit .git/hooks/post-commit
+	chmod +x .git/hooks/post-commit
+	@echo "Hook post-commit instalado."
